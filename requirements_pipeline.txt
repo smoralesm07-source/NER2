@@ -1,0 +1,58 @@
+# Dependencias del prototipo de reconocimiento de entidades
+#
+# El núcleo (capa de reglas, adjudicador, validador de spans, fusión, servidor
+# e interfaz) NO tiene dependencias: usa solo biblioteca estándar. Todo lo de
+# abajo es opcional y cada bloque habilita una capa. Instala solo lo que vayas
+# a usar.
+
+# ---------------------------------------------------------------------------
+# L0 — Extracción del artículo.  RECOMENDADA.
+# ---------------------------------------------------------------------------
+# Sin esto el extractor cae a un respaldo de biblioteca estándar que arrastra
+# mucho más boilerplate, y el boilerplate es la principal fuente de falsos
+# positivos del pipeline. ~15 MB.
+trafilatura>=2.0
+
+# ---------------------------------------------------------------------------
+# L2 — GLiNER zero-shot.  OPCIONAL, pesada.
+# ---------------------------------------------------------------------------
+# Sube el recall de personas naturales desconocidas, que es el punto ciego de
+# la capa de reglas. Costo: torch son ~200 MB de rueda más ~500 MB de pesos del
+# modelo, descargados desde Hugging Face en la primera ejecución.
+#
+# En GitHub Actions esto exige cachear ~/.cache/huggingface, o cada corrida
+# vuelve a descargar el modelo. Ver README_PIPELINE.md.
+#
+# Descomenta para habilitar:
+# gliner>=0.2.20
+# torch>=2.0
+
+# ---------------------------------------------------------------------------
+# L2 alternativa — GLiNER2 (fastino-ai).  RECOMENDADA sobre GLiNER v1.
+# ---------------------------------------------------------------------------
+# Encoder de 305M, esquema con descripción por etiqueta, inferencia en CPU.
+# Se selecciona con GLINER_BACKEND=v2 (valor por defecto del pipeline).
+#
+# CRÍTICO: usar el modelo MULTILINGÜE. El que aparece en el README oficial
+# (fastino/gliner2-base-v1) está entrenado en inglés y rinde mal sobre prensa
+# chilena. El pipeline usa fastino/gliner2-multi-v1 por defecto; se puede
+# cambiar con la variable GLINER2_MODELO, pero hay una prueba de regresión que
+# impide que el modelo por defecto deje de ser multilingüe.
+#
+# gliner2>=1.3
+# torch>=2.0
+
+# ---------------------------------------------------------------------------
+# L2 — Respaldo spaCy.  ALTERNATIVA MÁS LIVIANA A GLINER.
+# ---------------------------------------------------------------------------
+# Solo si no puedes instalar torch. Rinde bastante menos: es lo que este
+# prototipo viene a reemplazar. Usa es_core_news_lg, no el _sm.
+#
+# spacy>=3.7
+# https://github.com/explosion/spacy-models/releases/download/es_core_news_lg-3.7.0/es_core_news_lg-3.7.0-py3-none-any.whl
+
+# ---------------------------------------------------------------------------
+# L1 — Correferencia difusa del reconocedor v3 del Monitor UAF.  OPCIONAL.
+# ---------------------------------------------------------------------------
+# Solo si acoplas este prototipo a reconocedor_entidades.py, que la usa.
+# rapidfuzz>=3.0

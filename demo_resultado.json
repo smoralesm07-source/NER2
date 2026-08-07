@@ -1,0 +1,646 @@
+{
+  "version_pipeline": "1.0.0",
+  "version_taxonomia": "1.0.0",
+  "articulo": {
+    "url": "https://diario-ejemplo.cl/nacional/formalizacion",
+    "texto": "Fiscalía formaliza a empresarios por presunto lavado de activos en Puente Alto\nEl Juzgado de Garantía de Puente Alto acogió este martes la solicitud de la Fiscalía Regional Metropolitana Sur y formalizó a Ricardo Andrés Bustamante Leiva y a la empresaria Marcela Ortiz Vega por el delito de lavado de activos contemplado en la Ley 19.913.\nSegún la carpeta investigativa, las operaciones se habrían canalizado a través de Inversiones Bustamante y Compañía Limitada, RUT 76.543.210-3, y de Comercializadora del Maipo SpA, ambas con domicilio en la comuna de San Ramón. La resolución individualiza a Ricardo Bustamante con RUT 12.345.678-5.\nLa Unidad de Análisis Financiero remitió antecedentes al Ministerio Público luego de recibir reportes de operaciones sospechosas emitidos por Banco de Chile y por la Cooperativa de Ahorro y Crédito Coopeuch.\n\nEl abogado defensor, don Julio Sepúlveda, sostuvo que su representada, Marcela Ortiz, no tuvo participación en las operaciones cuestionadas. La defensa anunció que recurrirá ante la Corte de Apelaciones de San Miguel.\nPor su parte, la Comisión para el Mercado Financiero informó que mantiene un procedimiento sancionatorio separado contra Sartor Administradora General de Fondos S.A., entidad distinta de Sartor Finance Group, según precisó el organismo.\nLa Fundación Chile Transparente valoró la coordinación entre servicios. El Servicio de Impuestos Internos, en tanto, no ha informado acciones. El caso quedó radicado en la comuna de Pedro Aguirre Cerda para efectos administrativos.",
+    "titulo": "Fiscalía formaliza a empresarios por presunto lavado de activos en Puente Alto",
+    "bajada": "La investigación involucra a tres sociedades y un monto cercano a los $4.200 millones.",
+    "fecha_publicacion": "2026-07-22",
+    "autor": "Redacción Nacional",
+    "medio": "Diario Ejemplo",
+    "estado_extraccion": "COMPLETO",
+    "n_caracteres": 1701,
+    "extractor": "trafilatura/2.2.0",
+    "advertencias": [],
+    "utilizable": true
+  },
+  "texto_analizado": "Fiscalía formaliza a empresarios por presunto lavado de activos en Puente Alto\n\nLa investigación involucra a tres sociedades y un monto cercano a los $4.200 millones.\n\nFiscalía formaliza a empresarios por presunto lavado de activos en Puente Alto\nEl Juzgado de Garantía de Puente Alto acogió este martes la solicitud de la Fiscalía Regional Metropolitana Sur y formalizó a Ricardo Andrés Bustamante Leiva y a la empresaria Marcela Ortiz Vega por el delito de lavado de activos contemplado en la Ley 19.913.\nSegún la carpeta investigativa, las operaciones se habrían canalizado a través de Inversiones Bustamante y Compañía Limitada, RUT 76.543.210-3, y de Comercializadora del Maipo SpA, ambas con domicilio en la comuna de San Ramón. La resolución individualiza a Ricardo Bustamante con RUT 12.345.678-5.\nLa Unidad de Análisis Financiero remitió antecedentes al Ministerio Público luego de recibir reportes de operaciones sospechosas emitidos por Banco de Chile y por la Cooperativa de Ahorro y Crédito Coopeuch.\n\nEl abogado defensor, don Julio Sepúlveda, sostuvo que su representada, Marcela Ortiz, no tuvo participación en las operaciones cuestionadas. La defensa anunció que recurrirá ante la Corte de Apelaciones de San Miguel.\nPor su parte, la Comisión para el Mercado Financiero informó que mantiene un procedimiento sancionatorio separado contra Sartor Administradora General de Fondos S.A., entidad distinta de Sartor Finance Group, según precisó el organismo.\nLa Fundación Chile Transparente valoró la coordinación entre servicios. El Servicio de Impuestos Internos, en tanto, no ha informado acciones. El caso quedó radicado en la comuna de Pedro Aguirre Cerda para efectos administrativos.",
+  "entidades": [
+    {
+      "texto": "Puente Alto",
+      "nombre_normalizado": "Puente Alto",
+      "inicio": 67,
+      "fin": 78,
+      "tipo": "LUGAR",
+      "naturaleza": "NO_APLICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.9,
+      "fuentes": [
+        "LLM"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "Juzgado de Garantía de Puente Alto",
+      "justificacion": "Comuna de la Región Metropolitana.",
+      "variantes": [],
+      "ruts": [],
+      "senales": [],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Juzgado de Garantía de Puente Alto",
+      "nombre_normalizado": "Juzgado de Garantía de Puente Alto",
+      "inicio": 250,
+      "fin": 284,
+      "tipo": "TRIBUNAL",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "encabezado:Juzgado de Garantía",
+        "regla:encabezado_institucional"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Fiscalía Regional Metropolitana Sur",
+      "nombre_normalizado": "Fiscalía Regional Metropolitana Sur",
+      "inicio": 323,
+      "fin": 358,
+      "tipo": "ORGANISMO_PUBLICO",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "encabezado:Fiscalía Regional",
+        "regla:encabezado_institucional"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Ricardo Andrés Bustamante Leiva",
+      "nombre_normalizado": "Ricardo Andrés Bustamante Leiva",
+      "inicio": 373,
+      "fin": 404,
+      "tipo": "PERSONA",
+      "naturaleza": "PERSONA_NATURAL",
+      "rol_procesal": "FORMALIZADO",
+      "confianza_score": 0.9,
+      "fuentes": [
+        "LLM"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "formalizó a Ricardo Andrés Bustamante Leiva",
+      "justificacion": "Nombre y apellidos de persona natural, con calidad procesal explícita.",
+      "variantes": [
+        "Ricardo Bustamante"
+      ],
+      "ruts": [],
+      "senales": [],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Marcela Ortiz Vega",
+      "nombre_normalizado": "Marcela Ortiz Vega",
+      "inicio": 423,
+      "fin": 441,
+      "tipo": "PERSONA",
+      "naturaleza": "PERSONA_NATURAL",
+      "rol_procesal": "FORMALIZADO",
+      "confianza_score": 0.9,
+      "fuentes": [
+        "LLM"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "y a la empresaria Marcela Ortiz Vega por el delito de lavado de activos",
+      "justificacion": "Persona natural individualizada con nombre y dos apellidos.",
+      "variantes": [
+        "Marcela Ortiz"
+      ],
+      "ruts": [],
+      "senales": [],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Inversiones Bustamante y Compañía Limitada",
+      "nombre_normalizado": "Inversiones Bustamante y Compañía Limitada",
+      "inicio": 589,
+      "fin": 631,
+      "tipo": "EMPRESA",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "INVESTIGADO",
+      "confianza_score": 0.7,
+      "fuentes": [
+        "LLM",
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "las operaciones se habrían canalizado a través de Inversiones Bustamante",
+      "justificacion": "Contiene el apellido del formalizado.",
+      "variantes": [],
+      "ruts": [
+        "76.543.210-3"
+      ],
+      "senales": [
+        "sufijo:Limitada",
+        "regla:sufijo_societario",
+        "rut_asociado:76.543.210-3(d=6,rango=PERSONA_JURIDICA)"
+      ],
+      "conflictos": [
+        "LLM propuso PERSONA (PERSONA_NATURAL); prevalece EMPRESA (PERSONA_JURIDICA) por precedencia."
+      ],
+      "requiere_validacion": true,
+      "motivos_validacion": [
+        "conflicto de naturaleza entre capas",
+        "rol adverso sin confianza suficiente para publicar sin revisión"
+      ],
+      "n_menciones": 2
+    },
+    {
+      "texto": "Comercializadora del Maipo SpA",
+      "nombre_normalizado": "Comercializadora del Maipo SpA",
+      "inicio": 656,
+      "fin": 686,
+      "tipo": "EMPRESA",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.81,
+      "fuentes": [
+        "LLM",
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "y de Comercializadora del Maipo SpA",
+      "justificacion": "Sociedad utilizada para canalizar los fondos.",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "sufijo:SpA",
+        "regla:sufijo_societario"
+      ],
+      "conflictos": [],
+      "requiere_validacion": true,
+      "motivos_validacion": [
+        "el rol procesal devuelto no era admisible y se degradó"
+      ],
+      "n_menciones": 2
+    },
+    {
+      "texto": "San Ramón",
+      "nombre_normalizado": "San Ramón",
+      "inicio": 724,
+      "fin": 733,
+      "tipo": "LUGAR",
+      "naturaleza": "NO_APLICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.9,
+      "fuentes": [
+        "LLM"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "ambas con domicilio en la comuna de San Ramón",
+      "justificacion": "Comuna, no persona, pese a tener forma de nombre propio.",
+      "variantes": [],
+      "ruts": [
+        "12.345.678-5"
+      ],
+      "senales": [
+        "rut_asociado:12.345.678-5(d=59,rango=PERSONA_NATURAL)"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Unidad de Análisis Financiero",
+      "nombre_normalizado": "Unidad de Análisis Financiero",
+      "inicio": 809,
+      "fin": 838,
+      "tipo": "ORGANISMO_PUBLICO",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "encabezado:Unidad de Análisis Financiero",
+        "regla:encabezado_institucional"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Ministerio Público",
+      "nombre_normalizado": "Ministerio Público",
+      "inicio": 863,
+      "fin": 881,
+      "tipo": "ORGANISMO_PUBLICO",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "encabezado:Ministerio Público",
+        "regla:encabezado_institucional"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Banco de Chile",
+      "nombre_normalizado": "Banco de Chile",
+      "inicio": 948,
+      "fin": 962,
+      "tipo": "INSTITUCION_FINANCIERA",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "encabezado:Banco",
+        "regla:encabezado_institucional"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Cooperativa de Ahorro y Crédito Coopeuch",
+      "nombre_normalizado": "Cooperativa de Ahorro y Crédito Coopeuch",
+      "inicio": 972,
+      "fin": 1012,
+      "tipo": "INSTITUCION_FINANCIERA",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "encabezado:Cooperativa de Ahorro y Crédito",
+        "regla:encabezado_institucional"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Julio Sepúlveda",
+      "nombre_normalizado": "Julio Sepúlveda",
+      "inicio": 1040,
+      "fin": 1055,
+      "tipo": "PERSONA",
+      "naturaleza": "PERSONA_NATURAL",
+      "rol_procesal": "DEFENSA",
+      "confianza_score": 1.0,
+      "fuentes": [
+        "LLM",
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "El abogado defensor, don Julio Sepúlveda, sostuvo",
+      "justificacion": "Persona natural en calidad de defensor, no de investigado.",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "tratamiento:don",
+        "regla:tratamiento_personal"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 2
+    },
+    {
+      "texto": "Corte de Apelaciones de San Miguel",
+      "nombre_normalizado": "Corte de Apelaciones de San Miguel",
+      "inicio": 1197,
+      "fin": 1231,
+      "tipo": "TRIBUNAL",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "encabezado:Corte de Apelaciones",
+        "regla:encabezado_institucional"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Comisión para el Mercado Financiero",
+      "nombre_normalizado": "Comisión para el Mercado Financiero",
+      "inicio": 1250,
+      "fin": 1285,
+      "tipo": "ORGANISMO_PUBLICO",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "encabezado:Comisión para el Mercado Financiero",
+        "regla:encabezado_institucional"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Sartor Administradora General de Fondos S.A.",
+      "nombre_normalizado": "Sartor Administradora General de Fondos S.A.",
+      "inicio": 1354,
+      "fin": 1398,
+      "tipo": "INSTITUCION_FINANCIERA",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "sufijo:S.A.",
+        "giro_declarado:administradora\\s+general\\s+de\\s+fondos",
+        "regla:sufijo_societario"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Sartor Finance Group",
+      "nombre_normalizado": "Sartor Finance Group",
+      "inicio": 1420,
+      "fin": 1440,
+      "tipo": "EMPRESA",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "MENCIONADO",
+      "confianza_score": 0.9,
+      "fuentes": [
+        "LLM"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "entidad distinta de Sartor Finance Group",
+      "justificacion": "Persona jurídica distinta de Sartor AGF S.A.; el propio texto lo precisa.",
+      "variantes": [],
+      "ruts": [],
+      "senales": [],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Fundación Chile Transparente",
+      "nombre_normalizado": "Fundación Chile Transparente",
+      "inicio": 1473,
+      "fin": 1501,
+      "tipo": "ENTIDAD_SIN_FINES_DE_LUCRO",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "encabezado:Fundación",
+        "regla:encabezado_institucional"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Servicio de Impuestos Internos",
+      "nombre_normalizado": "Servicio de Impuestos Internos",
+      "inicio": 1545,
+      "fin": 1575,
+      "tipo": "ORGANISMO_PUBLICO",
+      "naturaleza": "PERSONA_JURIDICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.95,
+      "fuentes": [
+        "REGLA"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "",
+      "justificacion": "",
+      "variantes": [],
+      "ruts": [],
+      "senales": [
+        "encabezado:Servicio",
+        "regla:encabezado_institucional"
+      ],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    },
+    {
+      "texto": "Pedro Aguirre Cerda",
+      "nombre_normalizado": "Pedro Aguirre Cerda",
+      "inicio": 1652,
+      "fin": 1671,
+      "tipo": "LUGAR",
+      "naturaleza": "NO_APLICA",
+      "rol_procesal": "SIN_ROL",
+      "confianza_score": 0.9,
+      "fuentes": [
+        "LLM"
+      ],
+      "anclaje": "EXACTO",
+      "evidencia": "El caso quedó radicado en la comuna de Pedro Aguirre Cerda",
+      "justificacion": "El contexto territorial («la comuna de») resuelve la ambigüedad con el antropónimo.",
+      "variantes": [],
+      "ruts": [],
+      "senales": [],
+      "conflictos": [],
+      "requiere_validacion": false,
+      "motivos_validacion": [],
+      "n_menciones": 1
+    }
+  ],
+  "relaciones": [
+    {
+      "origen": "Fiscalía Regional Metropolitana Sur",
+      "tipo_relacion": "FORMALIZA_A",
+      "destino": "Ricardo Andrés Bustamante Leiva",
+      "evidencia": "acogió este martes la solicitud de la Fiscalía Regional Metropolitana Sur y formalizó a Ricardo Andrés Bustamante Leiva",
+      "evidencia_verificada": true
+    },
+    {
+      "origen": "Unidad de Análisis Financiero",
+      "tipo_relacion": "REPORTA_A",
+      "destino": "Ministerio Público",
+      "evidencia": "La Unidad de Análisis Financiero remitió antecedentes al Ministerio Público",
+      "evidencia_verificada": true
+    },
+    {
+      "origen": "Julio Sepúlveda",
+      "tipo_relacion": "DEFIENDE_A",
+      "destino": "Marcela Ortiz Vega",
+      "evidencia": "El abogado defensor, don Julio Sepúlveda, sostuvo que su representada, Marcela Ortiz",
+      "evidencia_verificada": true
+    }
+  ],
+  "delitos_mencionados": [
+    "lavado de activos"
+  ],
+  "sintesis": "El Juzgado de Garantía de Puente Alto formalizó a dos personas por lavado de activos tras una investigación originada en reportes de operaciones sospechosas remitidos por la UAF al Ministerio Público.",
+  "hay_procedimiento": true,
+  "resumen": {
+    "total": 20,
+    "conteo_por_naturaleza": {
+      "NO_APLICA": 3,
+      "PERSONA_JURIDICA": 14,
+      "PERSONA_NATURAL": 3
+    },
+    "conteo_por_tipo": {
+      "LUGAR": 3,
+      "TRIBUNAL": 2,
+      "ORGANISMO_PUBLICO": 5,
+      "PERSONA": 3,
+      "EMPRESA": 3,
+      "INSTITUCION_FINANCIERA": 3,
+      "ENTIDAD_SIN_FINES_DE_LUCRO": 1
+    },
+    "requieren_validacion": 2,
+    "con_rol_adverso": 3,
+    "con_rut": 2
+  },
+  "capas": {
+    "L1_reglas": {
+      "ejecutada": true,
+      "candidatos": 14,
+      "ruts_validos": 2,
+      "version_reglas": "1.0.0",
+      "reconocedor_v3_disponible": false,
+      "version_v3": "",
+      "gazetteer_geografico_disponible": false
+    },
+    "L2_gliner": {
+      "ejecutada": false,
+      "motivo": "desactivada por parámetro"
+    },
+    "L3_adjudicador": {
+      "ejecutada": true,
+      "simulado": false,
+      "modelo": "simulado-para-demostracion",
+      "propuestas": 10,
+      "ancladas": 9,
+      "rechazadas_por_anclaje": 1,
+      "evidencias_descartadas": 0,
+      "uso_tokens": {
+        "input_tokens": 2380,
+        "output_tokens": 1140,
+        "cache_read_input_tokens": 1810
+      }
+    },
+    "L4_fusion": {
+      "ejecutada": true,
+      "entidades": 20,
+      "ruts_sin_asociar": 0
+    }
+  },
+  "rechazadas_por_anclaje": [
+    {
+      "span_exacto": "Banco Santander Chile",
+      "offset_inicio": -1,
+      "nombre_normalizado": "Banco Santander Chile",
+      "tipo": "INSTITUCION_FINANCIERA",
+      "rol_procesal": "REPORTANTE",
+      "evidencia": "el banco remitió reportes de operaciones sospechosas",
+      "justificacion": "Entidad reportante mencionada en el artículo.",
+      "confianza": "MEDIA",
+      "variantes": [],
+      "motivo_rechazo": "La cadena «Banco Santander Chile» no aparece en el texto del artículo.",
+      "anclaje": "NO_ANCLADO"
+    }
+  ],
+  "advertencias": [
+    "1 entidad(es) propuestas por el modelo no existen literalmente en el artículo y fueron descartadas."
+  ],
+  "segundos": 0.01
+}

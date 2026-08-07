@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reconocimiento de entidades en prensa · Monitor UAF</title>
+<style>
+  :root{
+    /* Cromo frío para la máquina, folio tibio para el documento. */
+    --pizarra:#16212C; --pizarra-2:#22303E; --pizarra-3:#33475A;
+    --fondo:#DFE4E9;  --folio:#FCFBF7;
+    --tinta:#141B22;  --tinta-2:#4C5A68; --tinta-3:#77828F;
+    --linea:#C9D1D9;  --linea-2:#E2E7EC;
+
+    --natural:#6B3FA0; --natural-suave:#EFE6F8;
+    --juridica:#0B6157; --juridica-suave:#DBEDE9;
+    --neutro:#6E7A87;  --neutro-suave:#E8ECF0;
+    --marca:#9E3A16;   --marca-suave:#F8E5DA;
+
+    --serif: ui-serif, "Iowan Old Style", Charter, "Bitstream Charter", "Source Serif 4", Georgia, serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--fondo); color:var(--tinta);
+    font-family:var(--sans); font-size:15px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  button,input,select,textarea{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--pizarra-3); outline-offset:2px}
+
+  /* ---------- Riel superior ---------- */
+  .riel{
+    background:var(--pizarra); color:#E8EDF2;
+    padding:14px 20px; display:flex; gap:16px; align-items:center;
+    flex-wrap:wrap; position:sticky; top:0; z-index:20;
+    box-shadow:0 1px 0 rgba(0,0,0,.25);
+  }
+  .marca-titulo{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:#93A6B8; white-space:nowrap;
+  }
+  .marca-titulo b{display:block; color:#F2F6F9; letter-spacing:.06em; font-size:13px; font-weight:600}
+  .campo{flex:1 1 340px; display:flex; gap:8px; min-width:240px}
+  .campo input[type=url],.campo input[type=text]{
+    flex:1; padding:9px 12px; border-radius:3px;
+    border:1px solid var(--pizarra-3); background:var(--pizarra-2); color:#EEF3F7;
+    font-family:var(--mono); font-size:13px;
+  }
+  .campo input::placeholder{color:#71879B}
+  .boton{
+    padding:9px 18px; border:0; border-radius:3px; cursor:pointer;
+    background:#E8EDF2; color:var(--pizarra); font-weight:600; font-size:14px;
+  }
+  .boton:hover{background:#fff}
+  .boton:disabled{opacity:.45; cursor:progress}
+  .boton-fantasma{
+    background:transparent; border:1px solid var(--pizarra-3); color:#B9C8D6;
+    font-weight:500;
+  }
+  .boton-fantasma:hover{background:var(--pizarra-2); color:#EEF3F7}
+  .opciones{display:flex; gap:14px; align-items:center; font-size:12px; color:#93A6B8}
+  .opciones label{display:flex; gap:5px; align-items:center; cursor:pointer; white-space:nowrap}
+
+  /* ---------- Cinta de diagnóstico ---------- */
+  .cinta{
+    background:var(--pizarra-2); color:#A9BCCC; padding:7px 20px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em;
+    display:flex; gap:22px; flex-wrap:wrap; align-items:center;
+  }
+  .cinta span b{color:#E3EBF1; font-weight:600}
+  .cinta .apagada{color:#5E7488; text-decoration:line-through}
+
+  /* ---------- Cuerpo ---------- */
+  .lienzo{
+    display:grid; grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);
+    gap:20px; padding:20px; align-items:start;
+    max-width:1560px; margin:0 auto;
+  }
+  .panel{
+    background:var(--folio); border:1px solid var(--linea); border-radius:4px;
+    box-shadow:0 1px 3px rgba(20,27,34,.07);
+  }
+
+  /* ---------- Folio: el documento ---------- */
+  .folio-cabeza{padding:22px 26px 16px; border-bottom:1px solid var(--linea-2)}
+  .folio-cabeza h1{
+    margin:0 0 8px; font-family:var(--serif); font-size:23px; line-height:1.28;
+    font-weight:600; letter-spacing:-.005em;
+  }
+  .folio-meta{
+    font-family:var(--mono); font-size:11px; color:var(--tinta-3);
+    letter-spacing:.05em; display:flex; gap:14px; flex-wrap:wrap;
+  }
+  .folio-cuerpo{
+    padding:20px 26px 34px; font-family:var(--serif); font-size:16.5px;
+    line-height:1.72; white-space:pre-wrap; word-wrap:break-word;
+    max-height:calc(100vh - 260px); overflow-y:auto;
+  }
+
+  /* Marca de entidad dentro del texto: subrayado grueso, no fondo saturado.
+     El texto debe seguir siendo legible como prosa. */
+  mark.ent{
+    background:transparent; color:inherit; padding:1px 0 2px;
+    border-bottom:2.5px solid var(--neutro); cursor:pointer;
+    border-radius:0; transition:background .12s ease;
+  }
+  mark.ent:hover{background:var(--neutro-suave)}
+  mark.ent[data-nat="PERSONA_NATURAL"]{border-bottom-color:var(--natural)}
+  mark.ent[data-nat="PERSONA_NATURAL"]:hover{background:var(--natural-suave)}
+  mark.ent[data-nat="PERSONA_JURIDICA"]{border-bottom-color:var(--juridica)}
+  mark.ent[data-nat="PERSONA_JURIDICA"]:hover{background:var(--juridica-suave)}
+  mark.ent[data-revisar="1"]{border-bottom-style:dashed; border-bottom-color:var(--marca)}
+  mark.ent.activa{background:#FBF2C4; box-shadow:0 0 0 3px #FBF2C4}
+  mark.ent.atenuada{border-bottom-color:var(--linea); color:var(--tinta-3)}
+
+  /* ---------- Panel de afirmaciones ---------- */
+  .afirma-cabeza{
+    padding:16px 20px 12px; border-bottom:1px solid var(--linea-2);
+    position:sticky; top:0; background:var(--folio); z-index:5; border-radius:4px 4px 0 0;
+  }
+  .rotulo{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--tinta-3); margin-bottom:10px;
+  }
+  .conteos{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px}
+  .conteo{
+    font-family:var(--mono); font-size:11px; padding:4px 9px; border-radius:3px;
+    background:var(--neutro-suave); color:var(--tinta-2); letter-spacing:.03em;
+  }
+  .conteo b{font-size:13px}
+  .conteo.nat{background:var(--natural-suave); color:var(--natural)}
+  .conteo.jur{background:var(--juridica-suave); color:var(--juridica)}
+  .conteo.rev{background:var(--marca-suave); color:var(--marca)}
+
+  .filtros{display:flex; gap:6px; flex-wrap:wrap}
+  .filtro{
+    font-family:var(--mono); font-size:11px; padding:5px 10px; cursor:pointer;
+    background:transparent; border:1px solid var(--linea); border-radius:3px;
+    color:var(--tinta-2); letter-spacing:.03em;
+  }
+  .filtro[aria-pressed="true"]{background:var(--pizarra); border-color:var(--pizarra); color:#fff}
+
+  .lista{max-height:calc(100vh - 330px); overflow-y:auto; padding:8px 12px 20px}
+
+  .ficha{
+    border:1px solid var(--linea-2); border-left:4px solid var(--neutro);
+    border-radius:3px; padding:12px 14px; margin:8px 0; cursor:pointer;
+    background:#fff; transition:border-color .12s ease, box-shadow .12s ease;
+  }
+  .ficha:hover{box-shadow:0 2px 8px rgba(20,27,34,.1)}
+  .ficha[data-nat="PERSONA_NATURAL"]{border-left-color:var(--natural)}
+  .ficha[data-nat="PERSONA_JURIDICA"]{border-left-color:var(--juridica)}
+  .ficha[data-revisar="1"]{border-left-color:var(--marca); background:#FFFDFC}
+  .ficha.activa{box-shadow:0 0 0 2px var(--pizarra-3)}
+
+  .ficha-nombre{font-family:var(--serif); font-size:17px; line-height:1.3; margin-bottom:6px}
+  .ficha-linea{
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.05em;
+    color:var(--tinta-3); text-transform:uppercase; margin-bottom:8px;
+  }
+  .etiqueta-tipo{color:var(--tinta-2); font-weight:600}
+  .etiqueta-rol{
+    padding:2px 7px; border-radius:2px; background:var(--neutro-suave); color:var(--tinta-2);
+  }
+  .etiqueta-rol.adverso{background:var(--marca-suave); color:var(--marca); font-weight:600}
+
+  /* Barra de confianza segmentada: diez tramos, no un degradado. Un puntaje
+     es una estimación gruesa y la forma debe decirlo. */
+  .barra{display:flex; gap:2px; align-items:center; margin-bottom:8px}
+  .barra i{width:9px; height:5px; background:var(--linea); border-radius:1px}
+  .barra i.on{background:var(--neutro)}
+  .ficha[data-nat="PERSONA_NATURAL"] .barra i.on{background:var(--natural)}
+  .ficha[data-nat="PERSONA_JURIDICA"] .barra i.on{background:var(--juridica)}
+  .barra span{
+    font-family:var(--mono); font-size:10.5px; color:var(--tinta-3); margin-left:6px;
+  }
+
+  .evidencia{
+    font-family:var(--serif); font-size:13.5px; line-height:1.55; color:var(--tinta-2);
+    border-left:2px solid var(--linea); padding:2px 0 2px 10px; margin:8px 0;
+  }
+  .detalle{margin-top:8px}
+  .detalle summary{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--tinta-3); cursor:pointer; list-style:none;
+  }
+  .detalle summary::-webkit-details-marker{display:none}
+  .detalle summary::before{content:"▸ "}
+  .detalle[open] summary::before{content:"▾ "}
+  .detalle-cuerpo{
+    font-family:var(--mono); font-size:11px; line-height:1.65; color:var(--tinta-2);
+    margin-top:6px; word-break:break-word;
+  }
+  .detalle-cuerpo div{padding:2px 0; border-bottom:1px dotted var(--linea-2)}
+
+  .aviso{
+    border-left:3px solid var(--marca); background:var(--marca-suave);
+    padding:8px 12px; margin:8px 0; font-size:12.5px; color:#6E280F; border-radius:0 3px 3px 0;
+  }
+  .aviso b{font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:3px}
+
+  .vacio{padding:56px 30px; text-align:center; color:var(--tinta-3)}
+  .vacio p{max-width:46ch; margin:0 auto 8px; line-height:1.6}
+  .vacio .rotulo{margin-bottom:14px}
+
+  .nota-legal{
+    padding:14px 20px; font-size:11.5px; line-height:1.6; color:var(--tinta-3);
+    border-top:1px solid var(--linea-2);
+  }
+
+  @media (max-width:1020px){
+    .lienzo{grid-template-columns:1fr}
+    .folio-cuerpo,.lista{max-height:none}
+    .afirma-cabeza{position:static}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important; animation:none !important; scroll-behavior:auto !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="riel">
+  <div class="marca-titulo">Monitor UAF<b>Entidades en prensa</b></div>
+  <div class="campo">
+    <input id="url" type="url" placeholder="https://… enlace de la noticia" autocomplete="off" spellcheck="false">
+    <button id="analizar" class="boton">Analizar</button>
+  </div>
+  <div class="opciones">
+    <label><input type="checkbox" id="usar_gliner" checked> GLiNER</label>
+    <label><input type="checkbox" id="usar_llm" checked> Adjudicador</label>
+    <button id="cargar" class="boton boton-fantasma">Abrir JSON</button>
+    <input type="file" id="archivo" accept="application/json,.json" hidden>
+  </div>
+</header>
+
+<div class="cinta" id="cinta" hidden></div>
+
+<main class="lienzo">
+  <section class="panel" id="folio">
+    <div class="vacio">
+      <div class="rotulo">Sin artículo</div>
+      <p>Pega el enlace de una noticia para ver qué entidades encuentra el sistema.</p>
+      <p>Cada entidad queda anclada a su posición en el texto: al seleccionarla se resalta el fragmento exacto que la sustenta. Lo que no aparece literalmente en el artículo no se emite.</p>
+    </div>
+  </section>
+
+  <section class="panel" id="afirmaciones">
+    <div class="vacio">
+      <div class="rotulo">Sin resultados</div>
+      <p>Las entidades aparecerán aquí, agrupadas por naturaleza jurídica y ordenadas según aparición en el texto.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+"use strict";
+
+const $ = (sel) => document.querySelector(sel);
+const estado = { datos:null, filtro:"TODAS", seleccionada:null };
+
+const NOMBRE_TIPO = {
+  PERSONA:"Persona natural", EMPRESA:"Empresa",
+  INSTITUCION_FINANCIERA:"Institución financiera",
+  ORGANISMO_PUBLICO:"Organismo público", TRIBUNAL:"Tribunal",
+  ENTIDAD_SIN_FINES_DE_LUCRO:"Sin fines de lucro", ORGANIZACION:"Organización",
+  LUGAR:"Lugar", CRIPTOACTIVO:"Criptoactivo", MONTO:"Monto", FECHA:"Fecha",
+  RUT:"RUT", OTRO:"Sin clasificar"
+};
+const ROLES_ADVERSOS = new Set(["DENUNCIADO","INVESTIGADO","IMPUTADO","FORMALIZADO",
+  "ACUSADO","SANCIONADO_ADMINISTRATIVAMENTE","CONDENADO"]);
+
+/* ----------------------------------------------------------------- red */
+
+async function analizar(){
+  const url = $("#url").value.trim();
+  if(!url){ $("#url").focus(); return; }
+
+  const boton = $("#analizar");
+  boton.disabled = true; boton.textContent = "Analizando…";
+  mostrarMensaje("Analizando", "Descargando el artículo y ejecutando las capas de reconocimiento. Con GLiNER activo, la primera consulta de la sesión carga el modelo y tarda más.");
+
+  try{
+    const resp = await fetch("/analizar", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        url,
+        usar_gliner: $("#usar_gliner").checked,
+        usar_llm: $("#usar_llm").checked
+      })
+    });
+    const datos = await resp.json();
+    if(!resp.ok){ mostrarMensaje("No se pudo analizar", datos.error || "Error desconocido."); return; }
+    render(datos);
+  }catch(err){
+    mostrarMensaje("Sin conexión con el servidor",
+      "Inicia el servidor con «python servidor_local.py» en la misma carpeta, o usa «Abrir JSON» para revisar un resultado generado por el pipeline.");
+  }finally{
+    boton.disabled = false; boton.textContent = "Analizar";
+  }
+}
+
+function abrirArchivo(evento){
+  const archivo = evento.target.files[0];
+  if(!archivo) return;
+  const lector = new FileReader();
+  lector.onload = () => {
+    try{ render(JSON.parse(lector.result)); }
+    catch(e){ mostrarMensaje("Archivo ilegible", "El archivo no contiene JSON válido del pipeline."); }
+  };
+  lector.readAsText(archivo);
+  evento.target.value = "";
+}
+
+/* ------------------------------------------------------------- render */
+
+function render(datos){
+  estado.datos = datos; estado.seleccionada = null; estado.filtro = "TODAS";
+  renderCinta(datos);
+  renderFolio(datos);
+  renderAfirmaciones(datos);
+}
+
+function renderCinta(d){
+  const cinta = $("#cinta"); cinta.hidden = false; cinta.textContent = "";
+  const capas = d.capas || {};
+  const art = d.articulo || {};
+
+  const partes = [
+    ["Extracción", `${art.estado_extraccion || "?"} · ${art.n_caracteres || 0} car.`, art.estado_extraccion === "COMPLETO"],
+    ["L1 reglas", `${(capas.L1_reglas||{}).candidatos ?? 0} candidatos`, !!(capas.L1_reglas||{}).ejecutada],
+    ["L2 " + ((capas.L2_gliner||{}).fuente_efectiva || "GLiNER").toLowerCase(),
+      (capas.L2_gliner||{}).ejecutada ? `${capas.L2_gliner.candidatos ?? 0} candidatos` : "no ejecutada",
+      !!(capas.L2_gliner||{}).ejecutada],
+    ["L3 adjudicador",
+      (capas.L3_adjudicador||{}).ejecutada
+        ? `${capas.L3_adjudicador.ancladas ?? 0} ancladas · ${capas.L3_adjudicador.rechazadas_por_anclaje ?? 0} rechazadas`
+        : "no ejecutada",
+      !!(capas.L3_adjudicador||{}).ejecutada],
+    ["Tiempo", `${d.segundos ?? "?"} s`, true]
+  ];
+
+  for(const [etiqueta, valor, activa] of partes){
+    const span = document.createElement("span");
+    if(!activa) span.className = "apagada";
+    span.append(etiqueta + " ");
+    const b = document.createElement("b"); b.textContent = valor;
+    span.append(b);
+    cinta.append(span);
+  }
+}
+
+function renderFolio(d){
+  const folio = $("#folio"); folio.textContent = "";
+  const art = d.articulo || {};
+
+  const cabeza = document.createElement("div");
+  cabeza.className = "folio-cabeza";
+  const h1 = document.createElement("h1");
+  h1.textContent = art.titulo || "(sin título)";
+  cabeza.append(h1);
+
+  const meta = document.createElement("div");
+  meta.className = "folio-meta";
+  for(const valor of [art.medio, art.fecha_publicacion, art.autor, art.url].filter(Boolean)){
+    const s = document.createElement("span");
+    s.textContent = String(valor).slice(0,90);
+    meta.append(s);
+  }
+  cabeza.append(meta);
+  folio.append(cabeza);
+
+  for(const adv of (d.advertencias || [])){
+    const aviso = document.createElement("div");
+    aviso.className = "aviso"; aviso.style.margin = "12px 26px";
+    const b = document.createElement("b"); b.textContent = "Advertencia";
+    aviso.append(b, document.createTextNode(adv));
+    folio.append(aviso);
+  }
+
+  const cuerpo = document.createElement("div");
+  cuerpo.className = "folio-cuerpo";
+  cuerpo.append(construirTextoMarcado(d.texto_analizado || "", d.entidades || []));
+  folio.append(cuerpo);
+
+  const nota = document.createElement("div");
+  nota.className = "nota-legal";
+  nota.textContent = "Las clasificaciones y roles procesales reflejan lo que afirma la fuente de prensa. "
+    + "Una mención en prensa no equivale a una condena ni establece responsabilidad. "
+    + "Verifica contra fuentes oficiales antes de incorporar cualquier dato a un caso.";
+  folio.append(nota);
+}
+
+/* Se construye con nodos de texto, no con innerHTML: el contenido viene de
+   una página externa y no debe poder inyectar marcado. */
+function construirTextoMarcado(texto, entidades){
+  const frag = document.createDocumentFragment();
+  const tramos = [];
+
+  for(const ent of entidades){
+    const menciones = (ent.menciones && ent.menciones.length)
+      ? ent.menciones : [{inicio:ent.inicio, fin:ent.fin}];
+    for(const m of menciones){
+      if(Number.isInteger(m.inicio) && Number.isInteger(m.fin) && m.fin > m.inicio){
+        tramos.push({inicio:m.inicio, fin:m.fin, ent});
+      }
+    }
+  }
+  tramos.sort((a,b) => a.inicio - b.inicio || b.fin - a.fin);
+
+  let cursor = 0;
+  for(const tramo of tramos){
+    if(tramo.inicio < cursor) continue;               // solapado: se omite
+    if(tramo.inicio > cursor) frag.append(texto.slice(cursor, tramo.inicio));
+
+    const marca = document.createElement("mark");
+    marca.className = "ent";
+    marca.dataset.nat = tramo.ent.naturaleza;
+    marca.dataset.revisar = tramo.ent.requiere_validacion ? "1" : "0";
+    marca.dataset.clave = claveDe(tramo.ent);
+    marca.textContent = texto.slice(tramo.inicio, tramo.fin);
+    marca.title = `${NOMBRE_TIPO[tramo.ent.tipo] || tramo.ent.tipo} · confianza ${tramo.ent.confianza_score}`;
+    marca.addEventListener("click", () => seleccionar(claveDe(tramo.ent), "texto"));
+    frag.append(marca);
+    cursor = tramo.fin;
+  }
+  if(cursor < texto.length) frag.append(texto.slice(cursor));
+  return frag;
+}
+
+const claveDe = (ent) => `${ent.inicio}:${ent.fin}`;
+
+function renderAfirmaciones(d){
+  const panel = $("#afirmaciones"); panel.textContent = "";
+  const entidades = d.entidades || [];
+  const res = d.resumen || {};
+
+  const cabeza = document.createElement("div");
+  cabeza.className = "afirma-cabeza";
+
+  const rotulo = document.createElement("div");
+  rotulo.className = "rotulo";
+  rotulo.textContent = `Entidades reconocidas · ${entidades.length}`;
+  cabeza.append(rotulo);
+
+  const conteos = document.createElement("div");
+  conteos.className = "conteos";
+  const nat = (res.conteo_por_naturaleza || {});
+  conteos.append(
+    chip("nat", nat.PERSONA_NATURAL || 0, "naturales"),
+    chip("jur", nat.PERSONA_JURIDICA || 0, "jurídicas"),
+    chip("", res.con_rut || 0, "con RUT"),
+    chip("rev", res.requieren_validacion || 0, "por revisar")
+  );
+  cabeza.append(conteos);
+
+  const filtros = document.createElement("div");
+  filtros.className = "filtros";
+  const opciones = [
+    ["TODAS","Todas"], ["PERSONA_NATURAL","Naturales"],
+    ["PERSONA_JURIDICA","Jurídicas"], ["REVISAR","Por revisar"],
+    ["ADVERSO","Con rol adverso"]
+  ];
+  for(const [valor, texto] of opciones){
+    const b = document.createElement("button");
+    b.className = "filtro"; b.textContent = texto;
+    b.setAttribute("aria-pressed", String(estado.filtro === valor));
+    b.addEventListener("click", () => { estado.filtro = valor; renderAfirmaciones(estado.datos); });
+    filtros.append(b);
+  }
+  cabeza.append(filtros);
+  panel.append(cabeza);
+
+  const lista = document.createElement("div");
+  lista.className = "lista";
+  const visibles = entidades.filter(pasaFiltro);
+
+  if(!visibles.length){
+    const vacio = document.createElement("div");
+    vacio.className = "vacio";
+    const p = document.createElement("p");
+    p.textContent = entidades.length
+      ? "Ninguna entidad cumple este filtro."
+      : "El sistema no reconoció entidades en este artículo. Revisa el estado de extracción en la cinta superior.";
+    vacio.append(p); lista.append(vacio);
+  }else{
+    for(const ent of visibles) lista.append(construirFicha(ent));
+  }
+  panel.append(lista);
+
+  if((d.rechazadas_por_anclaje || []).length){
+    const aviso = document.createElement("div");
+    aviso.className = "aviso"; aviso.style.margin = "0 14px 16px";
+    const b = document.createElement("b");
+    b.textContent = `${d.rechazadas_por_anclaje.length} propuesta(s) descartada(s) por anclaje`;
+    aviso.append(b, document.createTextNode(
+      "El adjudicador propuso entidades que no aparecen literalmente en el artículo. No se emitieron: "
+      + d.rechazadas_por_anclaje.map(r => `«${r.span_exacto}»`).join(", ")
+    ));
+    panel.append(aviso);
+  }
+}
+
+function chip(clase, numero, texto){
+  const el = document.createElement("div");
+  el.className = "conteo" + (clase ? " " + clase : "");
+  const b = document.createElement("b"); b.textContent = String(numero);
+  el.append(b, document.createTextNode(" " + texto));
+  return el;
+}
+
+function pasaFiltro(ent){
+  switch(estado.filtro){
+    case "PERSONA_NATURAL":
+    case "PERSONA_JURIDICA": return ent.naturaleza === estado.filtro;
+    case "REVISAR": return !!ent.requiere_validacion;
+    case "ADVERSO": return ROLES_ADVERSOS.has(ent.rol_procesal);
+    default: return true;
+  }
+}
+
+function construirFicha(ent){
+  const clave = claveDe(ent);
+  const ficha = document.createElement("article");
+  ficha.className = "ficha" + (estado.seleccionada === clave ? " activa" : "");
+  ficha.dataset.nat = ent.naturaleza;
+  ficha.dataset.revisar = ent.requiere_validacion ? "1" : "0";
+  ficha.dataset.clave = clave;
+  ficha.tabIndex = 0;
+  ficha.addEventListener("click", () => seleccionar(clave, "ficha"));
+  ficha.addEventListener("keydown", (e) => {
+    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); seleccionar(clave, "ficha"); }
+  });
+
+  const nombre = document.createElement("div");
+  nombre.className = "ficha-nombre";
+  nombre.textContent = ent.nombre_normalizado || ent.texto;
+  ficha.append(nombre);
+
+  const linea = document.createElement("div");
+  linea.className = "ficha-linea";
+  const tipo = document.createElement("span");
+  tipo.className = "etiqueta-tipo";
+  tipo.textContent = NOMBRE_TIPO[ent.tipo] || ent.tipo;
+  linea.append(tipo);
+
+  if(ent.rol_procesal && ent.rol_procesal !== "SIN_ROL"){
+    const rol = document.createElement("span");
+    rol.className = "etiqueta-rol" + (ROLES_ADVERSOS.has(ent.rol_procesal) ? " adverso" : "");
+    rol.textContent = ent.rol_procesal.replace(/_/g," ").toLowerCase();
+    linea.append(rol);
+  }
+  if((ent.ruts || []).length){
+    const rut = document.createElement("span");
+    rut.textContent = ent.ruts.join(" · ");
+    linea.append(rut);
+  }
+  const fuentes = document.createElement("span");
+  fuentes.textContent = (ent.fuentes || []).join("+");
+  linea.append(fuentes);
+  ficha.append(linea);
+
+  ficha.append(barraConfianza(ent.confianza_score || 0));
+
+  if(ent.evidencia){
+    const ev = document.createElement("blockquote");
+    ev.className = "evidencia";
+    ev.textContent = ent.evidencia;
+    ficha.append(ev);
+  }
+
+  if(ent.requiere_validacion){
+    const aviso = document.createElement("div");
+    aviso.className = "aviso";
+    const b = document.createElement("b"); b.textContent = "Requiere validación";
+    aviso.append(b, document.createTextNode(
+      (ent.motivos_validacion || []).join(" · ") || "Revisar antes de usar."));
+    ficha.append(aviso);
+  }
+
+  const filas = [];
+  if(ent.justificacion) filas.push(["Criterio", ent.justificacion]);
+  if((ent.variantes || []).length) filas.push(["Variantes", ent.variantes.join(", ")]);
+  if((ent.conflictos || []).length) filas.push(["Conflictos", ent.conflictos.join(" | ")]);
+  if((ent.senales || []).length) filas.push(["Señales", ent.senales.join(" | ")]);
+  filas.push(["Anclaje", `${ent.anclaje} · offset ${ent.inicio}–${ent.fin}`]);
+
+  const detalle = document.createElement("details");
+  detalle.className = "detalle";
+  const resumen = document.createElement("summary");
+  resumen.textContent = "Traza de clasificación";
+  detalle.append(resumen);
+  const cuerpo = document.createElement("div");
+  cuerpo.className = "detalle-cuerpo";
+  for(const [etiqueta, valor] of filas){
+    const fila = document.createElement("div");
+    fila.textContent = `${etiqueta}: ${valor}`;
+    cuerpo.append(fila);
+  }
+  detalle.append(cuerpo);
+  ficha.append(detalle);
+
+  return ficha;
+}
+
+function barraConfianza(score){
+  const barra = document.createElement("div");
+  barra.className = "barra";
+  const llenos = Math.round(Math.max(0, Math.min(1, score)) * 10);
+  for(let i = 0; i < 10; i++){
+    const seg = document.createElement("i");
+    if(i < llenos) seg.className = "on";
+    barra.append(seg);
+  }
+  const etiqueta = document.createElement("span");
+  etiqueta.textContent = score.toFixed(2);
+  barra.append(etiqueta);
+  return barra;
+}
+
+/* ------------------------------------------------- enlace bidireccional */
+
+function seleccionar(clave, origen){
+  estado.seleccionada = (estado.seleccionada === clave) ? null : clave;
+
+  for(const m of document.querySelectorAll("mark.ent")){
+    m.classList.toggle("activa", !!estado.seleccionada && m.dataset.clave === estado.seleccionada);
+  }
+  for(const f of document.querySelectorAll(".ficha")){
+    f.classList.toggle("activa", !!estado.seleccionada && f.dataset.clave === estado.seleccionada);
+  }
+  if(!estado.seleccionada) return;
+
+  const destino = (origen === "ficha")
+    ? document.querySelector(`mark.ent[data-clave="${CSS.escape(estado.seleccionada)}"]`)
+    : document.querySelector(`.ficha[data-clave="${CSS.escape(estado.seleccionada)}"]`);
+  if(destino) destino.scrollIntoView({block:"center", behavior:"smooth"});
+}
+
+function mostrarMensaje(titulo, cuerpo){
+  for(const id of ["#folio", "#afirmaciones"]){
+    const panel = $(id); panel.textContent = "";
+    const vacio = document.createElement("div");
+    vacio.className = "vacio";
+    const rot = document.createElement("div");
+    rot.className = "rotulo"; rot.textContent = titulo;
+    const p = document.createElement("p"); p.textContent = cuerpo;
+    vacio.append(rot, p); panel.append(vacio);
+    if(id === "#afirmaciones") break;
+  }
+}
+
+/* ------------------------------------------------------------- arranque */
+
+$("#analizar").addEventListener("click", analizar);
+$("#url").addEventListener("keydown", (e) => { if(e.key === "Enter") analizar(); });
+$("#cargar").addEventListener("click", () => $("#archivo").click());
+$("#archivo").addEventListener("change", abrirArchivo);
+document.addEventListener("keydown", (e) => { if(e.key === "Escape" && estado.seleccionada) seleccionar(estado.seleccionada); });
+</script>
+</body>
+</html>
