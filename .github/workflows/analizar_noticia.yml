@@ -1,0 +1,92 @@
+name: Analizar noticia (entidades)
+
+# Permite analizar una noticia sin entorno local: Actions > este workflow >
+# "Run workflow" > pegar la URL. El resultado queda como artefacto descargable
+# y se abre en analizar_url.html con el botón "Abrir JSON".
+#
+# Es la vía de menor fricción mientras no haya un servidor institucional. La
+# latencia es de un par de minutos y la UX es pobre, pero no requiere
+# infraestructura nueva.
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL de la noticia a analizar"
+        required: true
+        type: string
+      usar_gliner:
+        description: "Ejecutar la capa GLiNER (más lenta: descarga ~500 MB la primera vez)"
+        required: false
+        type: boolean
+        default: false
+      usar_llm:
+        description: "Ejecutar el adjudicador (requiere el secreto ANTHROPIC_API_KEY)"
+        required: false
+        type: boolean
+        default: true
+      umbral_gliner:
+        description: "Umbral de confianza de GLiNER"
+        required: false
+        type: string
+        default: "0.45"
+
+permissions:
+  contents: read
+
+jobs:
+  analizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar extractor
+        run: pip install --quiet "trafilatura>=2.0"
+
+      # Sin esta caché, cada ejecución vuelve a bajar los pesos del modelo.
+      - name: Restaurar caché del modelo GLiNER
+        if: inputs.usar_gliner
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: gliner2-${{ hashFiles('requirements_pipeline.txt') }}
+          restore-keys: gliner2-
+
+      - name: Instalar GLiNER2
+        if: inputs.usar_gliner
+        run: pip install --quiet "gliner2>=1.3" "torch>=2.0" --index-url https://pypi.org/simple
+
+      - name: Ejecutar la suite de regresión
+        run: python -m unittest test_pipeline_url
+
+      - name: Analizar la noticia
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GLINER_BACKEND: v2
+          GLINER2_MODELO: fastino/gliner2-multi-v1
+        run: |
+          python pipeline_url.py \
+            --url "${{ inputs.url }}" \
+            --salida resultado.json \
+            --umbral-gliner "${{ inputs.umbral_gliner }}" \
+            ${{ inputs.usar_gliner && ' ' || '--sin-gliner' }} \
+            ${{ inputs.usar_llm && ' ' || '--sin-llm' }} \
+            --resumen
+
+      # El JSON contiene nombres de personas naturales asociados a menciones de
+      # prensa. La retención se limita para no acumular un índice de datos
+      # personales en la infraestructura de Actions.
+      - name: Publicar el resultado
+        uses: actions/upload-artifact@v4
+        with:
+          name: entidades-${{ github.run_number }}
+          path: resultado.json
+          retention-days: 7
